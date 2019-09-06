@@ -1,9 +1,12 @@
 # Welcome_system
 A Python GUI program
 
+## User Guide
+Run welcome_system.py for the main UI
 
+Run admin.py to set user information
 
-## Requirements
+## Environment Requirements
 
 absl-py==0.7.1
 
