@@ -4,6 +4,8 @@ from PyQt5.QtCore import *
 import json
 import sys
 import os
+import threading
+import datetime
 
 class Admin_win(QMainWindow):
     def __init__(self):
@@ -20,6 +22,19 @@ class Admin_win(QMainWindow):
         self.tab_win = QTabWidget(self)
         self.tab_win.setGeometry(0, 80, 1440, 800)
 
+        self.now_time = datetime.datetime.now()
+
+        self.time_l = QLCDNumber(self)
+        self.time_l.setGeometry(1020, 24, 400, 80)
+        self.time_l.setDigitCount(19)
+        self.time_l.setMode(QLCDNumber.Dec)
+        self.time_l.setSegmentStyle(QLCDNumber.Flat)
+        self.time_l.setStyleSheet("border: 2px solid black; color: solid black; background: silver;")
+        self.time_l.display(self.now_time.strftime("%Y-%m-%d %H:%M:%S"))
+
+        self.now_timer = threading.Timer(0, self.now_thread)
+        self.now_timer.setDaemon(True)
+        self.now_timer.start()
 
         save_act = QAction('&Save', self)
         save_act.setToolTip("Save")
@@ -114,6 +129,19 @@ class Admin_win(QMainWindow):
         self.people_tab.save_info()
         self.speech_tab.save_info()
         self.event_tab.save_info()
+        QMessageBox.question(self,
+                             'Save',
+                             "Save success",
+                             QMessageBox.Yes)
+
+    def now_thread(self):
+        self.now_time = datetime.datetime.now()
+        # Log("Now time is ", self.now_time)
+        self.time_l.display(self.now_time.strftime("%Y-%m-%d %H:%M:%S"))
+
+        self.now_timer = threading.Timer(1, self.now_thread)
+        self.now_timer.setDaemon(True)
+        self.now_timer.start()
 
     def closeEvent(self, event):
         reply = QMessageBox.question(self,
@@ -249,18 +277,38 @@ class People_tabel(QTableWidget):
         temp['event'] = self.input_win.event_line.text()
         temp['rank'] = self.input_win.rank_line.text()
 
-        self.people['people'].append(temp)
+        new_id = temp['id']
 
-        rowcnt = self.rowCount()
-        self.insertRow(rowcnt)
+        id_exist = False
 
-        for i, col in zip(range(len(temp)), temp.values()):
-            item = QTableWidgetItem(col)
-            item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-            self.setItem(rowcnt, i, item)
+        for person in self.people['people']:
+            if new_id == person['id']:
+                id_exist = True
+                wrong_dialog = QDialog()
+                wrong_dialog.setWindowTitle("Error")
+                wrong_dialog.setGeometry(700, 350, 200, 100)
+                wrong_dialog.info = QLabel(wrong_dialog)
+                wrong_dialog.info.setGeometry(50, 30, 100, 20)
+                wrong_dialog.info.setText("Error: ID exist!")
+                wrong_dialog.ok = QPushButton("ok", wrong_dialog)
+                wrong_dialog.ok.move(65, 65)
+                wrong_dialog.ok.clicked.connect(wrong_dialog.close)
+                wrong_dialog.exec_()
+                break
+
+        if id_exist is False:
+            self.people['people'].append(temp)
+
+            rowcnt = self.rowCount()
+            self.insertRow(rowcnt)
+
+            for i, col in zip(range(len(temp)), temp.values()):
+                item = QTableWidgetItem(col)
+                item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                self.setItem(rowcnt, i, item)
 
 
-        self.input_win.close()
+            self.input_win.close()
 
     def push_edit_ok(self):
         row_select = self.selectedItems()
@@ -279,17 +327,37 @@ class People_tabel(QTableWidget):
         temp['event'] = self.input_win.event_line.text()
         temp['rank'] = self.input_win.rank_line.text()
 
-        idx = self.people['people'].index(origin)
-        self.people['people'][idx] = temp
+        new_id = temp['id']
 
-        rowidx = self.row(row_select[0])
+        id_exist = False
 
-        for i, col in zip(range(len(temp)), temp.values()):
-            item = QTableWidgetItem(col)
-            item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-            self.setItem(rowidx, i, item)
+        for person in self.people['people']:
+            if new_id == person['id'] and new_id != origin['id']:
+                id_exist = True
+                wrong_dialog = QDialog()
+                wrong_dialog.setWindowTitle("Error")
+                wrong_dialog.setGeometry(700, 350, 200, 100)
+                wrong_dialog.info = QLabel(wrong_dialog)
+                wrong_dialog.info.setGeometry(50, 30, 100, 20)
+                wrong_dialog.info.setText("Error: ID exist!")
+                wrong_dialog.ok = QPushButton("ok", wrong_dialog)
+                wrong_dialog.ok.move(65, 65)
+                wrong_dialog.ok.clicked.connect(wrong_dialog.close)
+                wrong_dialog.exec_()
+                break
 
-        self.input_win.close()
+        if id_exist is False:
+            idx = self.people['people'].index(origin)
+            self.people['people'][idx] = temp
+
+            rowidx = self.row(row_select[0])
+
+            for i, col in zip(range(len(temp)), temp.values()):
+                item = QTableWidgetItem(col)
+                item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                self.setItem(rowidx, i, item)
+
+            self.input_win.close()
 
 class Event_tabel(QTableWidget):
 
