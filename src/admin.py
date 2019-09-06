@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import json
 import sys
+import os
 
 class Admin_win(QMainWindow):
     def __init__(self):
@@ -113,6 +114,18 @@ class Admin_win(QMainWindow):
         self.people_tab.save_info()
         self.speech_tab.save_info()
         self.event_tab.save_info()
+
+    def closeEvent(self, event):
+        reply = QMessageBox.question(self,
+                                     'Exit',
+                                     "Have you saved and sure to quit？",
+                                     QMessageBox.Yes |QMessageBox.No,
+                                     QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            event.accept()
+            os._exit(0)
+        else:
+            event.ignore()
 
 
 class People_tabel(QTableWidget):
