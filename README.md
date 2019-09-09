@@ -6,6 +6,8 @@ Run welcome_system.py for the main UI
 
 Run admin.py to set user information
 
+python version == 3.6.6
+
 ## Environment Requirements
 
 absl-py==0.7.1
