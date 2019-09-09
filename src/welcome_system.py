@@ -50,7 +50,7 @@ class Welcome_system(QMainWindow):
         self.time_l = QLCDNumber(self)
         self.people_l = QLabel(self)
         self.event_l = QLabel(self)
-        self.speech_l = Speech_win(self, 800, 200, 400, 600)
+        self.speech_l = Speech_win(self, 750, 100, 400, 600)
 
         self.run_timer = threading.Timer(0, self.count_runtime)
         self.run_timer.setDaemon(True)
