@@ -25,7 +25,7 @@ class Admin_win(QMainWindow):
         self.now_time = datetime.datetime.now()
 
         self.time_l = QLCDNumber(self)
-        self.time_l.setGeometry(1020, 24, 400, 80)
+        self.time_l.setGeometry(1020, 24, 400, 70)
         self.time_l.setDigitCount(19)
         self.time_l.setMode(QLCDNumber.Dec)
         self.time_l.setSegmentStyle(QLCDNumber.Flat)
