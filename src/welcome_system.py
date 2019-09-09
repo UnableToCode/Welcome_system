@@ -305,6 +305,8 @@ class Welcome_system(QMainWindow):
                                      QMessageBox.No)
         if reply == QMessageBox.Yes:
             event.accept()
+            self.p_face.terminate()
+            self.p_weather.terminate()
             os._exit(0)
         else:
             event.ignore()
