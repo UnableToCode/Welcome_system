@@ -1,7 +1,6 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from PyQt5 import QtWidgets
 from multiprocessing import Process, Pipe
 from src.get_weather import get_weather
 from src.video import face_regcon
@@ -299,26 +298,16 @@ class Welcome_system(QMainWindow):
         :param event:
         :return:
         """
-        reply = QtWidgets.QMessageBox.question(self,
-                                               'Exit',
-                                               "Quit？",
-                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-                                               QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+        reply = QMessageBox.question(self,
+                                     'Exit',
+                                     "Quit？",
+                                     QMessageBox.Yes | QMessageBox.No,
+                                     QMessageBox.No)
+        if reply == QMessageBox.Yes:
             event.accept()
-            self.p_weather.terminate()
-            self.p_face.terminate()
             os._exit(0)
         else:
             event.ignore()
-
-        # self.now_timer.cancel()
-        # self.speech_timer.cancel()
-        # self.hour_timer.cancel()
-        # self.day_timer.cancel()
-        # self.run_timer.cancel()
-        # self.face_timer.cancel()
-        # self.close()
 
 
 class Person:
