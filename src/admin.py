@@ -29,7 +29,7 @@ class Admin_win(QMainWindow):
         self.time_l.setDigitCount(19)
         self.time_l.setMode(QLCDNumber.Dec)
         self.time_l.setSegmentStyle(QLCDNumber.Flat)
-        self.time_l.setStyleSheet("border: 2px solid black; color: solid black; background: silver;")
+        self.time_l.setStyleSheet("border: 2px solid black; color: solid black; background: rgb(192, 192, 192, 50);")
         self.time_l.display(self.now_time.strftime("%Y-%m-%d %H:%M:%S"))
 
         self.now_timer = threading.Timer(0, self.now_thread)
