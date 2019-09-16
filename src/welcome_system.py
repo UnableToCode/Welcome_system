@@ -99,7 +99,8 @@ class Welcome_system(QMainWindow):
         self.time_l.setDigitCount(19)
         self.time_l.setMode(QLCDNumber.Dec)
         self.time_l.setSegmentStyle(QLCDNumber.Flat)
-        self.time_l.setStyleSheet("border: 2px solid black; color: solid black; background: rgb(192, 192, 192, 50);")
+        self.time_l.setStyleSheet("border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 200);"
+                                    "color: solid black; background: rgb(192, 192, 192, 50);")
         self.time_l.display(self.now_time.strftime("%Y-%m-%d %H:%M:%S"))
 
         self.speech_timer.start()
@@ -357,7 +358,8 @@ class Speech_win(QWidget):
 
         self.info.setText(info['info'])
         self.info.setFont(QFont("黑体", 18))
-        self.info.setStyleSheet("border: 2px solid black; color: black; background: rgb(141, 168, 237, 100);")
+        self.info.setStyleSheet("border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+                                "color: black; background: rgb(141, 168, 237, 30);")
         self.info.raise_()
         self.info.show()
 
@@ -388,20 +390,21 @@ class Weather_win(QWidget):
 
     def set_info(self, info):
         self.pic.setPixmap(QPixmap("../res/weather_image/" + info['data'][0]['hours'][0]['wea'] + ".png"))
-        self.pic.setStyleSheet("border: 2px solid black; color: black; background: rgba(227, 202, 185, 160);")
         self.pic.setAlignment(Qt.AlignCenter)
         self.pic.raise_()
         self.pic.show()
 
         self.city.setText(info['city'])
         self.city.setFont(QFont("黑体", 14))
-        self.city.setStyleSheet("border: 2px solid black; color: black; background: rgb(227, 202, 185, 160);")
+        self.city.setStyleSheet("border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+                                "color: black; background: rgb(227, 202, 185, 100);")
         self.city.raise_()
         self.city.show()
 
         self.wea.setText(info['data'][0]['hours'][0]['wea'])
         self.wea.setFont(QFont("黑体", 14))
-        self.wea.setStyleSheet("border: 2px solid black; color: black; background: rgb(227, 202, 185, 160);")
+        self.wea.setStyleSheet("border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+                                "color: black; background: rgb(227, 202, 185, 100);")
         self.wea.raise_()
         self.wea.show()
 
@@ -409,25 +412,29 @@ class Weather_win(QWidget):
             "气温:" + info['data'][0]['hours'][0]['tem'] + "  " + info['data'][0]['tem1'] + "/" + info['data'][0][
                 'tem2'])
         self.tem.setFont(QFont("黑体", 14))
-        self.tem.setStyleSheet("border: 2px solid black; color: black; background: rgb(227, 202, 185, 160);")
+        self.tem.setStyleSheet("border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+                                "color: black; background: rgb(227, 202, 185, 100);")
         self.tem.raise_()
         self.tem.show()
 
         self.wind.setText("风力:" + info['data'][0]['hours'][0]['win'] + "  " + info['data'][0]['hours'][0]['win_speed'])
         self.wind.setFont(QFont("黑体", 14))
-        self.wind.setStyleSheet("border: 2px solid black; color: black; background: rgb(227, 202, 185, 160);")
+        self.wind.setStyleSheet("border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+                                "color: black; background: rgb(227, 202, 185, 100);")
         self.wind.raise_()
         self.wind.show()
 
         self.humidity.setText("湿度:" + str(info['data'][0]['humidity']))
         self.humidity.setFont(QFont("黑体", 14))
-        self.humidity.setStyleSheet("border: 2px solid black; color: black; background: rgb(227, 202, 185, 160);")
+        self.humidity.setStyleSheet("border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+                                "color: black; background: rgb(227, 202, 185, 100);")
         self.humidity.raise_()
         self.humidity.show()
 
         self.air.setText("空气指数:" + str(info['data'][0]['air']) + "  " + info['data'][0]['air_level'])
         self.air.setFont(QFont("黑体", 14))
-        self.air.setStyleSheet("border: 2px solid black; color: black; background: rgb(227, 202, 185, 160);")
+        self.air.setStyleSheet("border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+                                "color: black; background: rgb(227, 202, 185, 100);")
         self.air.raise_()
         self.air.show()
 
