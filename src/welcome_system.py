@@ -325,6 +325,8 @@ class Speech_win(QWidget):
     def __init__(self, father, x, y, w, h):
         super().__init__(parent=father)
         self.setGeometry(x, y, w, h)
+
+
         self.title = QLabel(self)
         self.title.setGeometry(0, 0, w, 0.05 * h)
         self.person = QLabel(self)
@@ -356,7 +358,7 @@ class Speech_win(QWidget):
 
         self.info.setText(info['info'])
         self.info.setFont(QFont("黑体", 18))
-        self.info.setStyleSheet("border: 2px solid black; color: black; background: rgb(141, 168, 237);")
+        self.info.setStyleSheet("border: 2px solid black; color: black; background: rgba(141, 168, 237, 102);")
         self.info.raise_()
         self.info.show()
 
