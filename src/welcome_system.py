@@ -1,15 +1,17 @@
+import datetime
+import json
+import os
+import sys
+import threading
+import time
+from multiprocessing import Process, Pipe
+
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from multiprocessing import Process, Pipe
+
 from src.get_weather import get_weather
 from src.video import face_regcon
-import sys
-import json
-import datetime
-import time
-import threading
-import os
 
 log_file = "../log.txt"
 out_mode = 0
@@ -60,6 +62,8 @@ class Welcome_system(QMainWindow):
         self.speech_timer.setDaemon(True)
         self.now_timer = threading.Timer(0, self.now_thread)
         self.now_timer.setDaemon(True)
+        self.pic_timer = threading.Timer(15, self.pic_change)
+        self.pic_timer.setDaemon(True)
 
         self.p_weather = Process(target=get_weather, args=(self.weather,))
         self.p_face = Process(target=face_regcon, args=(self.face,))
@@ -72,14 +76,28 @@ class Welcome_system(QMainWindow):
         self.setGeometry(100, 80, 1440, 900)
         self.setFixedSize(1440, 900)
         # 设置窗口的标题
-        self.setWindowTitle('Welcome System')
+        self.setWindowTitle('')
         # 设置窗口的图标，引用当前目录下的web.png图片
         # self.setWindowIcon(QIcon('web.png'))
 
         # 设置窗口的背景图片，引用资源目录下的图片
-        palette = QPalette()
-        palette.setBrush(QPalette.Background, QBrush(QPixmap("../res/background.jpg")))
-        self.setPalette(palette)
+        # palette = QPalette()
+        # palette.setBrush(QPalette.Background, QBrush(QPixmap("../res/background.jpg")))
+        # self.setPalette(palette)
+        self.setStyleSheet("background: rgb(234, 237, 247);")
+
+        # Quit btn
+        self.quit_btn = QPushButton(self)
+        # TODO: set btn geometry and pic,delete text
+        self.quit_btn.setGeometry(1420, 0, 20, 20)
+        self.quit_btn.setStyleSheet("background-color:transparent;\n"
+                                    "border-width:0;\n"
+                                    "border-style:outset;")
+        quit_icon = QIcon("")
+        self.quit_btn.setIcon(quit_icon)
+        self.quit_btn.setIconSize(QSize(20, 20))
+        self.quit_btn.setText("Quit")
+        self.quit_btn.clicked.connect(self.on_quit_click)
 
         self.weather_l.set_info(self.weather_info)
         self.weather_l.raise_()
@@ -94,15 +112,18 @@ class Welcome_system(QMainWindow):
 
         self.people_l.setGeometry(0, 200, 1440, 300)
         self.event_l.setGeometry(0, 200, 1440, 300)
-        self.time_l.setGeometry(1020, 5, 400, 80)
+        self.time_l.setGeometry(1010, 5, 400, 80)
         self.time_l.setDigitCount(19)
         self.time_l.setMode(QLCDNumber.Dec)
         self.time_l.setSegmentStyle(QLCDNumber.Flat)
-        self.time_l.setStyleSheet("border: 2px solid black; color: solid black; background: silver;")
+        self.time_l.setStyleSheet(
+            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 200);"
+            "color: solid black; background: rgb(192, 192, 192, 50);")
         self.time_l.display(self.now_time.strftime("%Y-%m-%d %H:%M:%S"))
 
         self.speech_timer.start()
         self.now_timer.start()
+        self.pic_timer.start()
 
         # 显示窗口
         self.show()
@@ -168,7 +189,7 @@ class Welcome_system(QMainWindow):
 
     def read_speech_lsit(self):
         with open(self.speech_file, 'r', encoding='UTF-8') as load_f:
-           self.speech_info = json.load(load_f)
+            self.speech_info = json.load(load_f)
         load_f.close()
         Log("read speech list success.")
 
@@ -190,7 +211,8 @@ class Welcome_system(QMainWindow):
                     Log("stage1 to stage2!")
                     self.people_l.setText(self.people[id].name)
                     self.people_l.setFont(QFont("黑体", 16))
-                    self.people_l.setStyleSheet("border: 2px solid black; color: black; background: silver;")
+                    self.people_l.setStyleSheet(
+                        "border: 2px solid black; color: black; background: rgb(192, 192, 192, 50);")
                     self.people_l.raise_()
                     self.people_l.show()
                     people_timer = threading.Timer(3, self.people_l.hide)
@@ -205,7 +227,8 @@ class Welcome_system(QMainWindow):
                     Log(cur_event)
                     self.event_l.setText(cur_event)
                     self.event_l.setFont(QFont("黑体", 16))
-                    self.event_l.setStyleSheet("border: 2px solid black; color: black; background: white;")
+                    self.event_l.setStyleSheet(
+                        "border: 2px solid black; color: black; background: rgb(255, 241, 67, 50);")
                     self.event_l.raise_()
                     self.event_l.show()
                     event_timer = threading.Timer(2, self.event_l.hide)
@@ -291,6 +314,13 @@ class Welcome_system(QMainWindow):
         self.speech_timer.setDaemon(True)
         self.speech_timer.start()
 
+    def pic_change(self):
+        # TODO: finish picture change and delete print code(for test)
+        print("picture changed")
+        self.pic_timer = threading.Timer(15, self.pic_change)
+        self.pic_timer.setDaemon(True)
+        self.pic_timer.start()
+
     def closeEvent(self, event):
         """
         对MainWindow的函数closeEvent进行重构
@@ -311,6 +341,17 @@ class Welcome_system(QMainWindow):
         else:
             event.ignore()
 
+    def on_quit_click(self):
+        reply = QMessageBox.question(self,
+                                     'Exit',
+                                     "Quit？",
+                                     QMessageBox.Yes | QMessageBox.No,
+                                     QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            self.p_face.terminate()
+            self.p_weather.terminate()
+            os._exit(0)
+
 
 class Person:
     def __init__(self, person):
@@ -325,7 +366,6 @@ class Speech_win(QWidget):
     def __init__(self, father, x, y, w, h):
         super().__init__(parent=father)
         self.setGeometry(x, y, w, h)
-
 
         self.title = QLabel(self)
         self.title.setGeometry(0, 0, w, 0.05 * h)
@@ -358,7 +398,9 @@ class Speech_win(QWidget):
 
         self.info.setText(info['info'])
         self.info.setFont(QFont("黑体", 18))
-        self.info.setStyleSheet("border: 2px solid black; color: black; background: rgba(141, 168, 237, 102);")
+        self.info.setStyleSheet(
+            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+            "color: black; background: rgb(141, 168, 237, 30);")
         self.info.raise_()
         self.info.show()
 
@@ -373,36 +415,39 @@ class Weather_win(QWidget):
         super(Weather_win, self).__init__(parent=father)
         self.setGeometry(x, y, w, h)
         self.pic = QLabel(self)
-        self.pic.setGeometry(0, 0, 2 * w / 3, 0.4 * h)
+        self.pic.setGeometry(0, 0, w - 3, 0.3 * h)
         self.city = QTextBrowser(self)
-        self.city.setGeometry(0, 0.4 * h, w, 0.1 * h)
+        self.city.setGeometry(0, 0.3 * h + 2, w - 3, 0.1 * h)
         self.wea = QTextBrowser(self)
-        self.wea.setGeometry(0, 0.5 * h, w, 0.1 * h)
+        self.wea.setGeometry(0, 0.4 * h + 4, w - 3, 0.1 * h)
         self.tem = QTextBrowser(self)
-        self.tem.setGeometry(0, 0.6 * h, w, 0.1 * h)
+        self.tem.setGeometry(0, 0.5 * h + 6, w - 3, 0.1 * h)
         self.wind = QTextBrowser(self)
-        self.wind.setGeometry(0, 0.7 * h, w, 0.1 * h)
+        self.wind.setGeometry(0, 0.6 * h + 8, w - 3, 0.1 * h)
         self.humidity = QTextBrowser(self)
-        self.humidity.setGeometry(0, 0.8 * h, w, 0.1 * h)
+        self.humidity.setGeometry(0, 0.7 * h + 10, w - 3, 0.1 * h)
         self.air = QTextBrowser(self)
-        self.air.setGeometry(0, 0.9 * h, w, 0.1 * h)
+        self.air.setGeometry(0, 0.8 * h + 12, w - 3, 0.1 * h)
 
     def set_info(self, info):
         self.pic.setPixmap(QPixmap("../res/weather_image/" + info['data'][0]['hours'][0]['wea'] + ".png"))
-        self.pic.setStyleSheet("border: 2px solid white; color: black; background: rgb(227, 202, 185);")
         self.pic.setAlignment(Qt.AlignCenter)
         self.pic.raise_()
         self.pic.show()
 
         self.city.setText(info['city'])
         self.city.setFont(QFont("黑体", 14))
-        self.city.setStyleSheet("border: 2px solid white; color: black; background: rgb(227, 202, 185);")
+        self.city.setStyleSheet(
+            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+            "color: black; background: rgb(227, 202, 185, 100);")
         self.city.raise_()
         self.city.show()
 
         self.wea.setText(info['data'][0]['hours'][0]['wea'])
         self.wea.setFont(QFont("黑体", 14))
-        self.wea.setStyleSheet("border: 2px solid white; color: black; background: rgb(227, 202, 185);")
+        self.wea.setStyleSheet(
+            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+            "color: black; background: rgb(227, 202, 185, 100);")
         self.wea.raise_()
         self.wea.show()
 
@@ -410,25 +455,33 @@ class Weather_win(QWidget):
             "气温:" + info['data'][0]['hours'][0]['tem'] + "  " + info['data'][0]['tem1'] + "/" + info['data'][0][
                 'tem2'])
         self.tem.setFont(QFont("黑体", 14))
-        self.tem.setStyleSheet("border: 2px solid white; color: black; background: rgb(227, 202, 185);")
+        self.tem.setStyleSheet(
+            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+            "color: black; background: rgb(227, 202, 185, 100);")
         self.tem.raise_()
         self.tem.show()
 
         self.wind.setText("风力:" + info['data'][0]['hours'][0]['win'] + "  " + info['data'][0]['hours'][0]['win_speed'])
         self.wind.setFont(QFont("黑体", 14))
-        self.wind.setStyleSheet("border: 2px solid white; color: black; background: rgb(227, 202, 185);")
+        self.wind.setStyleSheet(
+            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+            "color: black; background: rgb(227, 202, 185, 100);")
         self.wind.raise_()
         self.wind.show()
 
         self.humidity.setText("湿度:" + str(info['data'][0]['humidity']))
         self.humidity.setFont(QFont("黑体", 14))
-        self.humidity.setStyleSheet("border: 2px solid white; color: black; background: rgb(227, 202, 185);")
+        self.humidity.setStyleSheet(
+            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+            "color: black; background: rgb(227, 202, 185, 100);")
         self.humidity.raise_()
         self.humidity.show()
 
         self.air.setText("空气指数:" + str(info['data'][0]['air']) + "  " + info['data'][0]['air_level'])
         self.air.setFont(QFont("黑体", 14))
-        self.air.setStyleSheet("border: 2px solid white; color: black; background: rgb(227, 202, 185);")
+        self.air.setStyleSheet(
+            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
+            "color: black; background: rgb(227, 202, 185, 100);")
         self.air.raise_()
         self.air.show()
 
@@ -439,4 +492,3 @@ if __name__ == '__main__':
     win = Welcome_system()
 
     sys.exit(app.exec_())
-
