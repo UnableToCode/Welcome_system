@@ -1,11 +1,13 @@
+import datetime
+import json
+import os
+import sys
+import threading
+
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-import json
-import sys
-import os
-import threading
-import datetime
+
 
 class Admin_win(QMainWindow):
     def __init__(self):
@@ -147,7 +149,7 @@ class Admin_win(QMainWindow):
         reply = QMessageBox.question(self,
                                      'Exit',
                                      "Have you saved and sure to quit？",
-                                     QMessageBox.Yes |QMessageBox.No,
+                                     QMessageBox.Yes | QMessageBox.No,
                                      QMessageBox.No)
         if reply == QMessageBox.Yes:
             event.accept()
@@ -157,7 +159,6 @@ class Admin_win(QMainWindow):
 
 
 class People_tabel(QTableWidget):
-
     class EditDialog(QDialog):
         def __init__(self, parent=None):
             super().__init__(parent)
@@ -207,7 +208,7 @@ class People_tabel(QTableWidget):
         self.setSelectionBehavior(QAbstractItemView.SelectRows)  # 设置表格的选取方式是行选取
         self.setSelectionMode(QAbstractItemView.SingleSelection)  # 设置选取方式为单个选取
         self.setHorizontalHeaderLabels(["ID", "Name", "Birth", "Event", "Rank"])  # 设置行表头
-        self.verticalHeader().setVisible(False) # 隐藏列表头
+        self.verticalHeader().setVisible(False)  # 隐藏列表头
         self.setFocusPolicy(Qt.NoFocus)
 
         self.people = {}
@@ -216,6 +217,10 @@ class People_tabel(QTableWidget):
         self.load_info()
 
     def load_info(self):
+        if os.path.exists(self.people_file) is False:
+            self.people['people'] = []
+            return
+
         with open(self.people_file, 'r') as load_f:
             self.people = json.load(load_f)
         load_f.close()
@@ -307,13 +312,12 @@ class People_tabel(QTableWidget):
                 item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                 self.setItem(rowcnt, i, item)
 
-
             self.input_win.close()
 
     def push_edit_ok(self):
         row_select = self.selectedItems()
 
-        origin ={}
+        origin = {}
         origin['id'] = row_select[0].text()
         origin['name'] = row_select[1].text()
         origin['birth'] = row_select[2].text()
@@ -359,8 +363,8 @@ class People_tabel(QTableWidget):
 
             self.input_win.close()
 
-class Event_tabel(QTableWidget):
 
+class Event_tabel(QTableWidget):
     class EditDialog(QDialog):
         def __init__(self, parent=None):
             super().__init__(parent)
@@ -403,6 +407,10 @@ class Event_tabel(QTableWidget):
         self.load_info()
 
     def load_info(self):
+        if os.path.exists(self.event_file) is False:
+            self.events = {}
+            return
+
         with open(self.event_file, 'r') as load_f:
             self.events = json.load(load_f)
         load_f.close()
@@ -514,7 +522,6 @@ class Event_tabel(QTableWidget):
 
 
 class Speech_tabel(QTableWidget):
-
     class EditDialog(QDialog):
         def __init__(self, parent=None):
             super().__init__(parent)
@@ -572,6 +579,10 @@ class Speech_tabel(QTableWidget):
         self.load_info()
 
     def load_info(self):
+        if os.path.exists(self.speech_file) is False:
+            self.speech_info['data'] = []
+            return
+
         with open(self.speech_file, 'r', encoding='UTF-8') as load_f:
             self.speech_info = json.load(load_f)
         load_f.close()
@@ -676,6 +687,7 @@ class Speech_tabel(QTableWidget):
 
         self.input_win.close()
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
@@ -684,4 +696,3 @@ if __name__ == "__main__":
     admin_win.show()
 
     sys.exit(app.exec_())
-

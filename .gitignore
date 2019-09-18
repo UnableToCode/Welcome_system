@@ -98,3 +98,7 @@ ENV/
 
 #model files
 model/
+
+#json file
+*.json
+
