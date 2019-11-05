@@ -18,7 +18,7 @@ out_mode = 0
 
 
 def Log(*msg):
-    now = datetime.datetime.now()
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     if out_mode == 0:
         print(now, ": ", *msg)
     elif out_mode == 1:
