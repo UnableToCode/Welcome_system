@@ -49,11 +49,11 @@ class Welcome_system(QMainWindow):
         self.face_detect = False
 
         # self.setWindowOpacity(0.9)
-        self.weather_l = Weather_win(self, 1100, 100, 300, 600)
+        self.weather_l = Weather_win(self, 720, 540, 360, 360)
         self.time_l = QLCDNumber(self)
         self.people_l = QLabel(self)
         self.event_l = QLabel(self)
-        self.speech_l = Speech_win(self, 650, 100, 400, 600)
+        self.speech_l = Speech_win(self, 720, 0, 360, 540)
         self.pic_l = QLabel(self)
 
         self.run_timer = threading.Timer(0, self.count_runtime)
@@ -78,7 +78,11 @@ class Welcome_system(QMainWindow):
         self.setGeometry(100, 80, 1440, 900)
         self.setFixedSize(1440, 900)
         self.setWindowFlags(Qt.FramelessWindowHint)
-        self.setStyleSheet("background: rgb(234, 237, 247);")
+
+        # 设置窗口的背景图片，引用资源目录下的图片
+        palette = QPalette()
+        palette.setBrush(QPalette.Background, QBrush(QPixmap("../res/background.jpg")))
+        self.setPalette(palette)
 
         # Quit btn
         self.quit_btn = QPushButton(self)
@@ -94,12 +98,10 @@ class Welcome_system(QMainWindow):
         self.weather_l.raise_()
         self.weather_l.show()
 
-        self.pic_l.setGeometry(100, 100, 450, 600)
-        self.pic_l.setStyleSheet(
-            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
-            "background-color:transparent;")
+        self.pic_l.setGeometry(1135, 450, 270, 360)
         self.pic_l.setScaledContents(1)
         self.pic_l.setPixmap(QPixmap(QImage("../res/paints/4.jpg")))
+        self.pic_l.setStyleSheet("border-width:0px;")
 
         # 每小时更新一次
         next_hour = datetime.datetime.now() + datetime.timedelta(hours=1)
@@ -110,13 +112,11 @@ class Welcome_system(QMainWindow):
 
         self.people_l.setGeometry(0, 200, 1440, 300)
         self.event_l.setGeometry(0, 200, 1440, 300)
-        self.time_l.setGeometry(1000, 10, 400, 80)
+        self.time_l.setGeometry(1100, 140, 320, 80)
         self.time_l.setDigitCount(19)
         self.time_l.setMode(QLCDNumber.Dec)
         self.time_l.setSegmentStyle(QLCDNumber.Flat)
-        self.time_l.setStyleSheet(
-            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
-            "color: solid black; background: rgb(192, 192, 192, 50);")
+        self.time_l.setStyleSheet("border-style:outset; border-width:0px; color: solid black;")
         self.time_l.display(self.now_time.strftime("%Y-%m-%d %H:%M:%S"))
 
         self.speech_timer.start()
@@ -365,41 +365,42 @@ class Speech_win(QWidget):
         super().__init__(parent=father)
         self.setGeometry(x, y, w, h)
 
-        self.title = QLabel(self)
-        self.title.setGeometry(0, 0, w, 0.05 * h)
-        self.person = QLabel(self)
-        self.person.setGeometry(0, 0.07 * h, w, 0.05 * h)
         self.pic = QLabel(self)
-        self.pic.setGeometry(0, 0.14 * h, 0.50 * w, 0.50 * h)
+        self.pic.setGeometry(0.25 * w, 0.02 * h, 0.50 * w, 0.48 * h)
+        self.title = QLabel(self)
+        self.title.setGeometry(0.05 * w, 0.52 * h, 0.9 * w, 0.05 * h)
+        self.person = QLabel(self)
+        self.person.setGeometry(0.05 * w, 0.59 * h, 0.9 * w, 0.05 * h)
         self.date = QLabel(self)
-        self.date.setGeometry(0, 0.66 * h, w, 0.05 * h)
+        self.date.setGeometry(0.05 * w, 0.66 * h, 0.9 * w, 0.05 * h)
         self.info = QLabel(self)
-        self.info.setGeometry(0, 0.75 * h, w, 0.25 * h)
+        self.info.setGeometry(0.05 * w, 0.75 * h, 0.9 * w, 0.25 * h)
 
     def set_info(self, info):
         self.title.setText(info['title'])
-        self.title.setFont(QFont("黑体", 20))
+        self.title.setFont(QFont("黑体", 15))
+        self.title.setAlignment(Qt.AlignHCenter)
         self.title.raise_()
         self.title.show()
 
         self.person.setText(info['person'])
-        self.person.setFont(QFont("黑体", 20))
+        self.person.setFont(QFont("黑体", 15))
+        self.person.setAlignment(Qt.AlignHCenter)
         self.person.raise_()
         self.person.show()
 
-        self.pic.setStyleSheet(
-            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);")
+        self.pic.setStyleSheet("border-width:0px")
 
         self.date.setText(info['date'])
-        self.date.setFont(QFont("黑体", 20))
+        self.date.setFont(QFont("黑体", 15))
+        self.date.setAlignment(Qt.AlignHCenter)
         self.date.raise_()
         self.date.show()
 
         self.info.setText(info['info'])
-        self.info.setFont(QFont("黑体", 18))
-        self.info.setStyleSheet(
-            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
-            "color: black; background: rgb(141, 168, 237, 30);")
+        self.info.setFont(QFont("黑体", 14))
+        self.info.setStyleSheet("border-width:0px; color: black;")
+        self.info.setAlignment(Qt.AlignHCenter)
         self.info.raise_()
         self.info.show()
 
@@ -414,19 +415,19 @@ class Weather_win(QWidget):
         super(Weather_win, self).__init__(parent=father)
         self.setGeometry(x, y, w, h)
         self.pic = QLabel(self)
-        self.pic.setGeometry(0, 0, w, 130)
+        self.pic.setGeometry(5, 0, w - 5, 130)
         self.city = QTextBrowser(self)
-        self.city.setGeometry(0, 135, w, 75)
+        self.city.setGeometry(5, 135, w - 5, 30)
         self.wea = QTextBrowser(self)
-        self.wea.setGeometry(0, 213, w, 75)
+        self.wea.setGeometry(5, 170, w - 5, 30)
         self.tem = QTextBrowser(self)
-        self.tem.setGeometry(0, 291, w, 75)
+        self.tem.setGeometry(5, 205, w - 5, 30)
         self.wind = QTextBrowser(self)
-        self.wind.setGeometry(0, 369, w, 75)
+        self.wind.setGeometry(5, 240, w - 5, 30)
         self.humidity = QTextBrowser(self)
-        self.humidity.setGeometry(0, 447, w, 75)
+        self.humidity.setGeometry(5, 275, w - 5, 30)
         self.air = QTextBrowser(self)
-        self.air.setGeometry(0, 525, w, 75)
+        self.air.setGeometry(5, 310, w - 5, 30)
 
     def set_info(self, info):
         self.pic.setPixmap(QPixmap("../res/weather_image/" + info['data'][0]['hours'][0]['wea'] + ".png"))
@@ -435,52 +436,46 @@ class Weather_win(QWidget):
         self.pic.show()
 
         self.city.setText(info['city'])
-        self.city.setFont(QFont("黑体", 18))
-        self.city.setStyleSheet(
-            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
-            "color: black; background: rgb(227, 202, 185, 100);")
+        self.city.setFont(QFont("黑体", 12))
+        self.city.setStyleSheet("border-style:outset; border-width:0px; color: black; background-color: transparent")
+        self.city.setAlignment(Qt.AlignHCenter)
         self.city.raise_()
         self.city.show()
 
         self.wea.setText(info['data'][0]['hours'][0]['wea'])
-        self.wea.setFont(QFont("黑体", 18))
-        self.wea.setStyleSheet(
-            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
-            "color: black; background: rgb(227, 202, 185, 100);")
+        self.wea.setFont(QFont("黑体", 12))
+        self.wea.setStyleSheet("border-style:outset; border-width:0px; color: black; background-color: transparent")
+        self.wea.setAlignment(Qt.AlignHCenter)
         self.wea.raise_()
         self.wea.show()
 
         self.tem.setText(
             "气温:" + info['data'][0]['hours'][0]['tem'] + "  " + info['data'][0]['tem1'] + "/" + info['data'][0][
                 'tem2'])
-        self.tem.setFont(QFont("黑体", 18))
-        self.tem.setStyleSheet(
-            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
-            "color: black; background: rgb(227, 202, 185, 100);")
+        self.tem.setFont(QFont("黑体", 12))
+        self.tem.setStyleSheet("border-style:outset; border-width:0px; color: black; background-color: transparent")
+        self.tem.setAlignment(Qt.AlignHCenter)
         self.tem.raise_()
         self.tem.show()
 
         self.wind.setText("风力:" + info['data'][0]['hours'][0]['win'] + "  " + info['data'][0]['hours'][0]['win_speed'])
-        self.wind.setFont(QFont("黑体", 18))
-        self.wind.setStyleSheet(
-            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
-            "color: black; background: rgb(227, 202, 185, 100);")
+        self.wind.setFont(QFont("黑体", 12))
+        self.wind.setStyleSheet("border-style:outset; border-width:0px; color: black; background-color: transparent")
+        self.wind.setAlignment(Qt.AlignHCenter)
         self.wind.raise_()
         self.wind.show()
 
         self.humidity.setText("湿度:" + str(info['data'][0]['humidity']))
-        self.humidity.setFont(QFont("黑体", 18))
-        self.humidity.setStyleSheet(
-            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
-            "color: black; background: rgb(227, 202, 185, 100);")
+        self.humidity.setFont(QFont("黑体", 12))
+        self.humidity.setStyleSheet("border-style:outset; border-width:0px; color: black; background-color: transparent")
+        self.humidity.setAlignment(Qt.AlignHCenter)
         self.humidity.raise_()
         self.humidity.show()
 
         self.air.setText("空气指数:" + str(info['data'][0]['air']) + "  " + info['data'][0]['air_level'])
-        self.air.setFont(QFont("黑体", 18))
-        self.air.setStyleSheet(
-            "border-style:outset; border-width:4px; border-radius:10px; border-color:rgb(255, 255, 255, 30);"
-            "color: black; background: rgb(227, 202, 185, 100);")
+        self.air.setFont(QFont("黑体", 12))
+        self.air.setAlignment(Qt.AlignHCenter)
+        self.air.setStyleSheet("border-style:outset; border-width:0px; color: black; background-color: transparent")
         self.air.raise_()
         self.air.show()
 

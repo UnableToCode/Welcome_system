@@ -16,11 +16,6 @@ class Admin_win(QMainWindow):
         self.setFixedSize(1440, 900)
         self.setWindowTitle('Admin System')
 
-        # 设置窗口的背景图片，引用资源目录下的图片
-        palette = QPalette()
-        palette.setBrush(QPalette.Background, QBrush(QPixmap("../res/background.jpg")))
-        self.setPalette(palette)
-
         self.tab_win = QTabWidget(self)
         self.tab_win.setGeometry(0, 80, 1440, 800)
 
