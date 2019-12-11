@@ -98,9 +98,9 @@ class Welcome_system(QMainWindow):
         self.weather_l.raise_()
         self.weather_l.show()
 
-        self.pic_l.setGeometry(1135, 450, 270, 360)
+        self.pic_l.setGeometry(1110, 450, 300, 300)
         self.pic_l.setScaledContents(1)
-        self.pic_l.setPixmap(QPixmap(QImage("../res/paints/4.jpg")))
+        self.pic_l.setPixmap(QPixmap(QImage("../res/logo.png")))
         self.pic_l.setStyleSheet("border-width:0px;")
 
         # 每小时更新一次
